@@ -1,79 +1,64 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using NSubstitute;
+﻿using NSubstitute;
+using NSubstituteAutoMocker;
 
-namespace NSubstituteAutoMocker.UnitTests.DocumentationSnippets
+namespace AutoMockerNSubstitute.UnitTests.DocumentationSnippets;
+
+public class SavingsAccount(IInterestCalculator interestCalculator)
 {
-    public class SavingsAccount
+    public decimal Balance { get; private set; }
+
+    public void Deposit(decimal amount)
     {
-        private readonly IInterestCalculator _interestCalculator;
-
-        public SavingsAccount(IInterestCalculator interestCalculator)
-        {
-            _interestCalculator = interestCalculator;
-        }
-
-        public decimal Balance { get; private set; }
-
-        public void Deposit(decimal amount)
-        {
-            Balance += amount;
-        }
-
-        public void WithDraw(decimal amount)
-        {
-            Balance -= amount;
-        }
-
-        public void ApplyInterest()
-        {
-            Balance += _interestCalculator.Calculate();
-        }
+        Balance += amount;
     }
 
-    public interface IInterestCalculator
+    public void WithDraw(decimal amount)
     {
-        decimal Calculate();
+        Balance -= amount;
     }
 
-    [TestClass]
-    public class SavingsAccountTests
+    public void ApplyInterest()
     {
-        [TestMethod]
-        public void ApplyInterestUpdatesTheBalance()
-        {
-            // Arange
-            IInterestCalculator interestCalculator = Substitute.For<IInterestCalculator>();
-            interestCalculator.Calculate().Returns(123);
-            SavingsAccount savingsAccount = new SavingsAccount(interestCalculator);
-
-            // Act
-            savingsAccount.ApplyInterest();
-
-            // Assert
-            Assert.AreEqual(123, savingsAccount.Balance);
-        }
+        Balance += interestCalculator.Calculate();
     }
+}
 
-    [TestClass]
-    public class SavingsAccountTestsWithNSubstituteAutoMocker
+public interface IInterestCalculator
+{
+    decimal Calculate();
+}
+
+public class SavingsAccountTests
+{
+    [Fact]
+    public void ApplyInterestUpdatesTheBalance()
     {
-        [TestMethod]
-        public void ApplyInterestUpdatesTheBalance()
-        {
-            // Arange
-            var automocker = new NSubstituteAutoMocker<SavingsAccount>();
-            automocker.Get<IInterestCalculator>().Calculate().Returns(123);
+        // Arrange
+        IInterestCalculator interestCalculator = Substitute.For<IInterestCalculator>();
+        interestCalculator.Calculate().Returns(123);
+        SavingsAccount savingsAccount = new SavingsAccount(interestCalculator);
 
-            // Act
-            automocker.ClassUnderTest.ApplyInterest();
+        // Act
+        savingsAccount.ApplyInterest();
 
-            // Assert
-            Assert.AreEqual(123, automocker.ClassUnderTest.Balance);
-        }
+        // Assert
+        Assert.Equal(123, savingsAccount.Balance);
+    }
+}
+
+public class SavingsAccountTestsWithNSubstituteAutoMocker
+{
+    [Fact]
+    public void ApplyInterestUpdatesTheBalance()
+    {
+        // Arrange
+        var automocker = new NSubstituteAutoMocker<SavingsAccount>();
+        automocker.Get<IInterestCalculator>().Calculate().Returns(123);
+
+        // Act
+        automocker.ClassUnderTest.ApplyInterest();
+
+        // Assert
+        Assert.Equal(123, automocker.ClassUnderTest.Balance);
     }
 }

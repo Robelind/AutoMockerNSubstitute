@@ -1,3 +1,5 @@
+This repo was forked from [NSubstituteAutoMocker](https://github.com/kevin-mcmanus/NSubstituteAutoMocker), which seems quite dead, and is updated to be able to target relevant frameworks.
+
 NSubstituteAutoMocker
 =====================
 

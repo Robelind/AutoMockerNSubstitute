@@ -1,4 +1,4 @@
-﻿namespace NSubstituteAutoMocker.UnitTests.SamplesToTest
+﻿namespace AutoMockerNSubstitute.UnitTests.SamplesToTest
 {
     public interface IDependency1
     {
