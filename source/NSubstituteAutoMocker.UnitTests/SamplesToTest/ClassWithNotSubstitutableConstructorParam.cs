@@ -1,0 +1,3 @@
+﻿namespace AutoMockerNSubstitute.UnitTests.SamplesToTest;
+
+public class ClassWithNotSubstitutableConstructorParam(ConcreteClass testClass);

@@ -35,10 +35,27 @@ public class NSubstituteAutoMocker<T> where T : class
         foreach (ParameterInfo info in parameters)
         {
             Type type = info.ParameterType;
-            var constructorArg = CreateInstance(type);
+            object constructorArg = null;
+            ArgumentException exception = null;
+
+            try
+            {
+                constructorArg = CreateInstance(type);
+            }
+            catch (ArgumentException e)
+            {
+                // Give caller a chance to override the parameter.
+                exception = e;
+            }
+            
             if (parameterOverrideFunc != null)
             {
                 constructorArg = parameterOverrideFunc(info, constructorArg);
+            }
+
+            if (constructorArg == null && exception != null)
+            {
+                throw exception;
             }
             _constructors.Add(info, constructorArg);
         }

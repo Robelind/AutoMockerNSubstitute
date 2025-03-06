@@ -74,6 +74,12 @@ public class NSubstituteAutoMockerTests
         }
 
         [Fact]
+        public void ThrowsExceptionIfNotSubstitutableParam()
+        {
+            Assert.Throws<ArgumentException>(() => new NSubstituteAutoMocker<ClassWithNotSubstitutableConstructorParam>());
+        }
+
+        [Fact]
         public void CanOverrideParameterViaEvent()
         {
             NSubstituteAutoMocker<ClassWithAllConstructors> autoMocker =
@@ -100,6 +106,19 @@ public class NSubstituteAutoMockerTests
                     });
 
             Assert.IsAssignableFrom<Dependency1VitoImplementation>(autoMocker.ClassUnderTest.Dependency1);
+        }
+
+        [Fact]
+        public void ThrowsExceptionIfOverrideIsNull()
+        {
+            Assert.Throws<ArgumentException>(() => new NSubstituteAutoMocker<ClassWithNotSubstitutableConstructorParam>((_, _) => null));
+        }
+
+        [Fact]
+        public void CanOverrideNotSubstitutableParam()
+        {
+            new NSubstituteAutoMocker<ClassWithNotSubstitutableConstructorParam>((paramInfo, obj) =>
+                paramInfo.ParameterType == typeof(ConcreteClass) ? new ConcreteClassForTest() : obj);
         }
     }
 
